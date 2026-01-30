@@ -14,23 +14,26 @@ class sd:
             os.mount(self.sd, "/sd")
             if self.default_path not in os.listdir("/sd"):
                 os.mkdir("/sd/" + self.default_path)
-            if "config.sdstore.py" not in os.listdir("/sd/" + self.default_path):
-                with open("/sd/" + self.default_path + "/config.sdstore.py", "w") as f:
+            if "config.sdstore" not in os.listdir("/sd/" + self.default_path):
+                with open("/sd/" + self.default_path + "/config.sdstore", "w") as f:
                     f.write("{}")
         except Exception as e:
             print("Failed to mount:", e)
 
         self.stores = {}
-        with open("/sd/" + self.default_path + "/config.sdstore.py") as f:
+        with open("/sd/" + self.default_path + "/config.sdstore") as f:
             self.stores["config"] = json.loads(f.read())
             
-    def default(self, store="config"):
-        if store + ".sdstore.py" not in os.listdir("/sd/" + self.default_path):
-            with open("/sd/" + self.default_path + "/" + store + ".sdstore.py", "w") as f:
+    def default(self, store="config", path=default_path):
+        if path not in os.listdir("/sd"):
+            os.mkdir("/sd/" + path)
+        self.default_path = path
+        if store + ".sdstore" not in os.listdir("/sd/" + path):
+            with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
                 f.write("{}")
-        with open("/sd/" + self.default_path + "/" + store + ".sdstore.py") as f:
+        with open("/sd/" + self.default_path + "/" + store + ".sdstore") as f:
             self.stores[store] = json.loads(f.read())
-            self.default = store
+            self.default_store = store
             return self.stores[store]
 
     def get(self, name, value=None, store=default_store):
@@ -40,19 +43,19 @@ class sd:
         if store not in self.stores:
             self.load(store)
         self.stores[store][name] = value
-        with open("/sd/" + self.default_path + "/" + store + ".sdstore.py", "w") as f:
+        with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
             f.write(json.dumps(self.stores[store]))
 
     def dlt(self, name, store=default_store):
         if store not in self.stores or name not in self.stores[store]:
             return False
         del self.stores[store][name]
-        with open("/sd/" + self.default_path + "/" + store + ".sdstore.py", "w") as f:
+        with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
             f.write(json.dumps(self.stores[store]))
         return True
 
     def load(self, store=default_store):
-        filename = store + ".sdstore.py"
+        filename = store + ".sdstore"
         if filename not in os.listdir("/sd/" + self.default_path):
             with open("/sd/" + self.default_path + "/" + filename, "w") as f:
                 f.write("{}")
@@ -64,17 +67,17 @@ class sd:
         if value is None:
             value = {}
         self.stores[store] = value
-        with open("/sd/" + self.default_path + "/" + store + ".sdstore.py", "w") as f:
+        with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
             f.write(json.dumps(self.stores[store]))
         return self.stores[store]
     
     def save(self, store=None):
         if store is None:
             for name in self.stores:
-                with open("/sd/" + self.default_path + "/" + name + ".sdstore.py", "w") as f:
+                with open("/sd/" + self.default_path + "/" + name + ".sdstore", "w") as f:
                     f.write(json.dumps(self.stores[name]))
         else:
-            with open("/sd/" + self.default_path + "/" + store + ".sdstore.py", "w") as f:
+            with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
                 f.write(json.dumps(self.stores[store]))
                 
     
