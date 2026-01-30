@@ -25,8 +25,14 @@ class sd:
             self.stores["config"] = json.loads(f.read())
             
     def default(self, store="config", path=default_path):
-        if path not in os.listdir("/sd"):
-            os.mkdir("/sd/" + path)
+        spath = path.split("/")
+        bpath = ""
+        for folder in spath:
+            if folder not in os.listdir("/sd" + bpath):
+                os.mkdir("/sd" + bpath + "/" + folder)
+                bpath += "/" + folder
+        #if path not in os.listdir("/sd"):
+        #    os.mkdir("/sd/" + path)
         self.default_path = path
         if store + ".sdstore" not in os.listdir("/sd/" + path):
             with open("/sd/" + self.default_path + "/" + store + ".sdstore", "w") as f:
@@ -89,12 +95,28 @@ class sd:
                 dirpth = "/" + pth
             return os.listdir("/sd" + dirpth)
         
+        def newdir(pth=""):
+            if pth == "":
+                return
+            spath = pth.split("/")
+            bpath = ""
+            for folder in spath:
+                if folder not in os.listdir("/sd" + bpath):
+                    os.mkdir("/sd" + bpath + "/" + folder)
+                    bpath += "/" + folder
+            return os.listdir("/sd" + bpath)
+        
         def read(pth):
             with open("/sd/" + pth) as f:
                 return f.read()
             
         def exists(pth):
-            if filename not in os.listdir("/sd"):
+            spath = pth.split("/")
+            bpath = ""
+            for folder in spath:
+                if folder not in os.listdir("/sd" + bpath):
+                    return False
+            if filename not in os.listdir("/sd" + bpath):
                 return False
             else:
                 return True

@@ -16,7 +16,7 @@ sd = sdstore.sd(slot=2, sck=machine.Pin(18), mosi=machine.Pin(23), miso=machine.
 # it's saved to file in sd/sdstore/config.sdstore
 # if you like, you can use sd.default(name) to change the default store after init, or just sd.default() to reset back.
 sd.default()
-# you could also change the storage path from /sdstore/ by setting `path` if you want, sd.default(path="user")
+# you could also change the storage path from /sdstore/ by setting `path` if you want, sd.default(path="user/storage/skibidi")
 print("Defaults: ", sd.default_path, sd.default_store)
 
 
@@ -40,7 +40,7 @@ group = {
     "Justin": "Dog"
 }
 
-# set adds to store dict then saves as JSON, so non-raw objects are fine
+# set adds key and value to store dict, then saves dict as JSON, so non-raw objects are fine
 sd.set("friendgroup", group)
 print(sd.stores["config"]["friendgroup"]["Amy"])
 print(sd.get("friendgroup")["Andy"])
@@ -72,6 +72,10 @@ print(sd.file.dir("sdstore"))
 # like sd.read("book.txt") or sd.read("user/files/book.txt")
 
 # sd.file.exists("book.txt") True if exists, False if not
+
+# not everything autocreates directories.
+# make your directory first, before attempting to save to it, like:
+# sd.file.newdir("some/new/folders")
 
 # sd.file.new("book.txt")
 # sd.file.new("user/book.txt", "This one isn't blank.")
