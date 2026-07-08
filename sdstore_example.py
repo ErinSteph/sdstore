@@ -68,8 +68,8 @@ print(sd.get("friendgroup")["Amy"])
 # lets check the main storage files:
 print(sd.file.dir("sdstore"))
 
-# load file contents with sd.read(file*)
-# like sd.read("book.txt") or sd.read("user/files/book.txt")
+# load file contents with sd.file.read(file*)
+# like sd.file.read("book.txt") or sd.file.read("user/files/book.txt")
 
 # sd.file.exists("book.txt") True if exists, False if not
 
